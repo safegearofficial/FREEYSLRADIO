@@ -29,7 +29,25 @@ function searchForMusic() {
 
 function onSearchResponse(response) {
   const videoIds = response.items.map(item => item.id.videoId);
-  currentPlaylist = videoIds;
+  checkEmbeddableVideos(videoIds);
+}
+
+function checkEmbeddableVideos(videoIds) {
+  const request = gapi.client.youtube.videos.list({
+    part: "status",
+    id: videoIds.join(','),
+    fields: "items(id,status(embeddable))"
+  });
+
+  request.execute(onVideoDetailsResponse);
+}
+
+function onVideoDetailsResponse(response) {
+  const embeddableVideoIds = response.items
+    .filter(item => item.status.embeddable)
+    .map(item => item.id);
+
+  currentPlaylist = embeddableVideoIds;
   playVideo(currentPlaylist[currentTrack]);
 }
 
