@@ -74,6 +74,7 @@ function onVideoDetailsResponse(response) {
     .map(item => item.id);
 
   currentPlaylist = embeddableVideoIds;
+  shuffleArray(currentPlaylist); // Shuffle the playlist before starting playback
   playVideo(currentPlaylist[currentTrack]);
 }
 
@@ -86,9 +87,13 @@ function onPlayerStateChange(event) {
     playVideo(currentPlaylist[currentTrack]);
   }
 }
-
 function playVideo(videoId) {
   if (player && videoId) {
     player.loadVideoById(videoId);
+  }
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
