@@ -1,64 +1,23 @@
-const API_KEY = "AIzaSyBYOdFNlLytvvpH52y4UyZHwHklFN_N2Qg";
-const ARTIST_NAME = "Young Thug";
-const MAX_RESULTS = 25;
+let player;
 
-let currentPlaylist = [];
-let currentTrack = 0;
-
-function onClientLoad() {
-  gapi.client.setApiKey(API_KEY);
-  gapi.client.load("youtube", "v3", onYouTubeApiLoad);
-}
-
-function onYouTubeApiLoad() {
-  document.getElementById("playButton").addEventListener("click", searchForMusic);
-  document.getElementById("nextButton").addEventListener("click", playNextTrack);
-}
-
-function searchForMusic() {
-  const request = gapi.client.youtube.search.list({
-    part: "snippet",
-    type: "video",
-    q: ARTIST_NAME,
-    maxResults: MAX_RESULTS,
-    fields: "items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description))"
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('player', {
+    height: '360',
+    width: '640',
+    videoId: '6Dh-RL__uN4',
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
   });
-
-  request.execute(onSearchResponse);
 }
 
-function onSearchResponse(response) {
-  const videoIds = response.items.map(item => item.id.videoId);
-  checkEmbeddableVideos(videoIds);
+function onPlayerReady(event) {
+  event.target.playVideo();
 }
 
-function checkEmbeddableVideos(videoIds) {
-  const request = gapi.client.youtube.videos.list({
-    part: "status",
-    id: videoIds.join(','),
-    fields: "items(id,status(embeddable))"
-  });
-
-  request.execute(onVideoDetailsResponse);
+function onPlayerStateChange(event) {
+  if (event.data == YT.PlayerState.ENDED) {
+    player.playVideo();
+  }
 }
-
-function onVideoDetailsResponse(response) {
-  const embeddableVideoIds = response.items
-    .filter(item => item.status.embeddable)
-    .map(item => item.id);
-
-  currentPlaylist = embeddableVideoIds;
-  playVideo(currentPlaylist[currentTrack]);
-}
-
-function playNextTrack() {
-  currentTrack = (currentTrack + 1) % currentPlaylist.length;
-  playVideo(currentPlaylist[currentTrack]);
-}
-
-function playVideo(videoId) {
-  const youtubePlayer = document.getElementById("youtubePlayer");
-  youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-}
-
-window.addEventListener("load", onClientLoad);
