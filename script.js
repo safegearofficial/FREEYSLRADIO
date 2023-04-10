@@ -1,6 +1,6 @@
 const ARTIST_NAME = "Young Thug";
 const MAX_RESULTS = 50;
-const API_KEY = 'YOUR_YOUTUBE_API_KEY';
+const API_KEY = 'AIzaSyBYOdFNlLytvvpH52y4UyZHwHklFN_N2Qg';
 
 let currentPlaylist = [];
 let currentTrack = 0;
