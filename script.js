@@ -18,18 +18,20 @@ function onYouTubeApiLoad() {
 
 function searchForMusic() {
   const request = gapi.client.youtube.search.list({
-    part: "snippet",
-    type: "video",
-    q: ARTIST_NAME,
-    maxResults: MAX_RESULTS,
-    fields: "items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description))"
-  });
+  part: "snippet,status",
+  type: "video",
+  q: ARTIST_NAME,
+  maxResults: MAX_RESULTS,
+  fields: "items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description),status(embeddable))"
+});
 
   request.execute(onSearchResponse);
 }
 
 function onSearchResponse(response) {
-  const videoIds = response.items.map(item => item.id.videoId);
+  const videoIds = response.items
+    .filter(item => item.status.embeddable) // Filter out videos that are not embeddable
+    .map(item => item.id.videoId);
   currentPlaylist = videoIds;
   playVideo(currentPlaylist[currentTrack]);
 }
