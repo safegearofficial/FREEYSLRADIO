@@ -74,13 +74,13 @@ function onVideoDetailsResponse(response) {
     .map(item => item.id);
 
   currentPlaylist = embeddableVideoIds;
-  shuffleArray(currentPlaylist); // Shuffle the playlist before starting playback
+  currentTrack = getRandomTrack();
   playVideo(currentPlaylist[currentTrack]);
 }
 
 function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.ENDED) {
-    currentTrack++;
+    currentTrack = getRandomTrack();
     if (currentTrack >= currentPlaylist.length) {
       currentTrack = 0;
     }
@@ -97,3 +97,7 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+  function getRandomTrack() {
+  return Math.floor(Math.random() * currentPlaylist.length);
+}
+
