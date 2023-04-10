@@ -39,15 +39,24 @@ function initClient() {
   });
 }
 
-function searchVideos() {
+function searchVideos(pageToken) {
   const request = gapi.client.youtube.search.list({
     part: "snippet",
     type: "video",
-    q: ARTIST_NAME,
-    maxResults: MAX_RESULTS,
-    fields: "items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description))"
+    q: `${ARTIST_NAME} official music`,
+    maxResults: 50,
+    fields: "nextPageToken,items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description))",
+    videoDefinition: "high",
+    pageToken: pageToken,
   });
-  request.execute(onSearchResponse);
+
+  request.execute(response => {
+    onSearchResponse(response);
+
+    if (response.nextPageToken) {
+      searchVideos(response.nextPageToken);
+    }
+  });
 }
 
 function onSearchResponse(response) {
