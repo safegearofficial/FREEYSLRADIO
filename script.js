@@ -23,10 +23,7 @@ function onPlayerReady(event) {
   });
 
   document.getElementById('nextButton').addEventListener('click', () => {
-    currentTrack++;
-    if (currentTrack >= currentPlaylist.length) {
-      currentTrack = 0;
-    }
+    currentTrack = getRandomTrack();
     playVideo(currentPlaylist[currentTrack]);
   });
 
@@ -81,23 +78,16 @@ function onVideoDetailsResponse(response) {
 function onPlayerStateChange(event) {
   if (event.data == YT.PlayerState.ENDED) {
     currentTrack = getRandomTrack();
-    if (currentTrack >= currentPlaylist.length) {
-      currentTrack = 0;
-    }
     playVideo(currentPlaylist[currentTrack]);
   }
 }
+
 function playVideo(videoId) {
   if (player && videoId) {
     player.loadVideoById(videoId);
   }
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-  function getRandomTrack() {
-  return Math.floor(Math.random() * currentPlaylist.length);
 }
 
+function getRandomTrack() {
+  return Math.floor(Math.random() * currentPlaylist.length);
+}
